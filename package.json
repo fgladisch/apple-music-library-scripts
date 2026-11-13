@@ -17,8 +17,11 @@
     "node": ">=24"
   },
   "lint-staged": {
-    "*.ts": "eslint --fix",
-    "*.{ts,js,mjs,md,json}": "prettier --write"
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{js,mjs,md,json}": "prettier --write"
   },
   "devDependencies": {
     "@types/node": "24.13.4",
