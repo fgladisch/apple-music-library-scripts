@@ -1,0 +1,6 @@
+*.csv
+.env
+.DS_Store
+*-report*.json
+*.log
+node_modules/
