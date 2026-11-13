@@ -165,6 +165,24 @@ export function pickBestMatch<T extends CatalogResource>(
   return best;
 }
 
+export function searchTerms({
+  artist,
+  title,
+}: Pick<Entry, "artist" | "title">) {
+  const terms = [`${artist} ${title}`];
+  const stripped = title
+    .replace(/\([^)]*\)|\[[^\]]*\]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (stripped && stripped !== title) terms.push(`${artist} ${stripped}`);
+  terms.push(title);
+  return terms;
+}
+
+export function errorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
+
 export function authorizationHeader(developerToken: string) {
   return `Bearer ${developerToken.trim().replace(/^bearer\s+/i, "")}`;
 }

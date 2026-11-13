@@ -3,10 +3,11 @@
 Scripts that bring an exported music library into Apple Music.
 
 - `pnpm favourite` favourites (loves) every track in `favourite.csv` and also adds it to your library, as the Music app does by default.
+- `pnpm import-albums` does the same for every album in `albums.csv`.
 
-The CSV files are exports from [TuneMyMusic](https://www.tunemymusic.com/). Export your liked songs from the source service as a CSV file and save it as `favourite.csv` in the project root.
+The CSV files are exports from [TuneMyMusic](https://www.tunemymusic.com/). Export your liked songs and your favourite albums from the source service as CSV files and save them as `favourite.csv` and `albums.csv` in the project root.
 
-The track names in a YouTube export look like `Artist · Writer · Writer - Title`, so the script uses the first artist and the title to search the Apple Music catalog. When the `Artist name` column is filled, it uses that instead. It only uses a result when both the artist and the title match. Duplicate rows are processed once.
+The scripts search the Apple Music catalog for the artist and the title, and only use a result when both match. Duplicate rows are processed once. Track names in a YouTube export look like `Artist · Writer · Writer - Title`; when the `Artist name` column is empty, the first artist and the title are taken from the track name.
 
 ## Requirements
 
@@ -41,26 +42,28 @@ APPLE_MUSIC_USER_TOKEN=...
 ```sh
 # Check the matches first; nothing is changed
 pnpm favourite --dry-run
+pnpm import-albums --dry-run
 
 # Favourite everything and add it to the library
 pnpm favourite
+pnpm import-albums
 ```
 
-Options:
+Both scripts take the same options:
 
-| Option                | Description                                                                                                             |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `--csv <path>`        | CSV file to read (default `favourite.csv`)                                                                              |
-| `--report <path>`     | JSON report, also used to resume (default `favourite-report.json`, or `favourite-report.dry-run.json` with `--dry-run`) |
-| `--storefront <code>` | Catalog country, e.g. `de` (default: your account's storefront)                                                         |
-| `--limit <n>`         | Process at most `n` tracks that aren't done yet, e.g. `--limit 3` to try a few first                                    |
-| `--delay <ms>`        | Minimum pause between requests (default `1000`)                                                                         |
-| `--no-library`        | Only favourite; don't add the songs to the library                                                                      |
-| `--dry-run`           | Search and report without changing anything                                                                             |
+| Option                | Description                                                                                                                                |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `--csv <path>`        | CSV file to read (default `favourite.csv` or `albums.csv`)                                                                                 |
+| `--report <path>`     | JSON report, also used to resume (default `favourite-report.json` or `albums-report.json`, with `.dry-run` before `.json` for `--dry-run`) |
+| `--storefront <code>` | Catalog country, e.g. `de` (default: your account's storefront)                                                                            |
+| `--limit <n>`         | Process at most `n` rows that aren't done yet, e.g. `--limit 3` to try a few first                                                         |
+| `--delay <ms>`        | Minimum pause between requests (default `1000`)                                                                                            |
+| `--no-library`        | Only favourite; don't add to the library                                                                                                   |
+| `--dry-run`           | Search and report without changing anything                                                                                                |
 
-The report is saved after every track. For each track it records the Apple Music song chosen and a status: `favourited`, `matched` (dry run), `unmatched`, or `failed`. Rows that couldn't be parsed (for example `Loathe`, which has no title) are listed under `skipped`.
+The report is saved after every row. For each row it records the Apple Music song or album chosen and a status: `favourited`, `matched` (dry run), `unmatched`, or `failed`. Rows that couldn't be parsed (for example `Loathe`, which has no title) are listed under `skipped`.
 
-Running the same command again resumes: it skips finished and unmatched tracks and retries failed ones. When Apple Music rate-limits the script, it waits, retries, and slows down for the rest of the run.
+Running the same command again resumes: it skips finished and unmatched rows and retries failed ones. When Apple Music rate-limits the script, it waits, retries, and slows down for the rest of the run.
 
 ## Development
 

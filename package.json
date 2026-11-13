@@ -11,7 +11,8 @@
     "lint:check": "eslint '**/*.ts' --max-warnings=0",
     "lint-staged": "lint-staged",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test 'src/**/*.test.ts'"
+    "test": "tsx --test 'src/**/*.test.ts'",
+    "import-albums": "tsx --env-file-if-exists=.env src/import-albums.ts"
   },
   "engines": {
     "node": ">=24"
